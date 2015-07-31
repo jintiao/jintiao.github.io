@@ -61,147 +61,145 @@
             <p>本文是关于游戏安全方面的简单笔记。
 了解并实践下面的知识，并不代表你的游戏就能避免被破解，要有一个清醒的认识：这是一个永远魔高一尺的世界。</p>
 
-<h2 id="section">客户端</h2>
+<h2 id="客户端">客户端</h2>
 
-<h3 id="section-1">内存数值修改</h3>
+<h3 id="内存数值修改">内存数值修改</h3>
 
 <p>坏人通过查找内存中的数值(比如金钱数999)、或者在数值变化前后做内存对比(比如血量从100掉到80)等方法来定位你变量的位置，然后进行内存修改或锁定。</p>
 
 <p>对应方法：</p>
 
 <ul>
-  <li>不要”明文”储存重要的数值</li>
-  <li>把数值放到多处备份，每次都要对所有备份进行一致性校验。</li>
-  <li>记录数值的变化历史，检测不正常的数值变化。</li>
+<li>不要&quot;明文&quot;储存重要的数值</li>
+<li>把数值放到多处备份，每次都要对所有备份进行一致性校验。</li>
+<li>记录数值的变化历史，检测不正常的数值变化。</li>
 </ul>
 
 <p><em>参考ProtectedNumber类的一些处理方法</em></p>
-
-<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">class</span> <span class="nc">ProtectedNumber</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">class</span> <span class="nc">ProtectedNumber</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
-	<span class="n">ProtectedNumber</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">mMask</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-		<span class="n">mMaskB</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-		
-		<span class="n">mIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-		<span class="n">mValueB</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
-		<span class="n">memset</span> <span class="p">(</span><span class="n">mValue</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">mValue</span><span class="p">));</span>
-		<span class="n">memset</span> <span class="p">(</span><span class="n">mValueB</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">mValue</span><span class="p">));</span>
+    <span class="n">ProtectedNumber</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">mMask</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">mMaskB</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-		<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span> <span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-			<span class="n">mMask</span> <span class="o">|=</span> <span class="p">(</span><span class="n">rand</span> <span class="p">()</span> <span class="o">%</span> <span class="mi">255</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
-			<span class="n">mMaskB</span> <span class="o">|=</span> <span class="p">(</span><span class="n">rand</span> <span class="p">()</span> <span class="o">%</span> <span class="mi">255</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
-		<span class="p">}</span>
+        <span class="n">mIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">mValueB</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+        <span class="n">memset</span> <span class="p">(</span><span class="n">mValue</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">mValue</span><span class="p">));</span>
+        <span class="n">memset</span> <span class="p">(</span><span class="n">mValueB</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">mValue</span><span class="p">));</span>
 
-		<span class="n">Set</span> <span class="p">(</span><span class="n">n</span><span class="p">);</span>
-	<span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span> <span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">mMask</span> <span class="o">|=</span> <span class="p">(</span><span class="n">rand</span> <span class="p">()</span> <span class="o">%</span> <span class="mi">255</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
+            <span class="n">mMaskB</span> <span class="o">|=</span> <span class="p">(</span><span class="n">rand</span> <span class="p">()</span> <span class="o">%</span> <span class="mi">255</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
+        <span class="p">}</span>
 
-	<span class="o">~</span><span class="n">ProtectedNumber</span> <span class="p">(){</span>
-		<span class="k">delete</span> <span class="n">mValueB</span><span class="p">;</span>
-	<span class="p">}</span>
+        <span class="n">Set</span> <span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
 
-	<span class="kt">void</span> <span class="n">Set</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">){</span>
-		<span class="n">mIndex</span><span class="o">++</span><span class="p">;</span>
-		<span class="k">if</span> <span class="p">(</span><span class="n">mIndex</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span>
-			<span class="n">mIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-		<span class="n">mValue</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">^</span> <span class="n">mMask</span><span class="p">;</span>
-		<span class="n">mValueB</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">^</span> <span class="n">mMaskB</span><span class="p">;</span>
-	<span class="p">}</span>
+    <span class="o">~</span><span class="n">ProtectedNumber</span> <span class="p">(){</span>
+        <span class="k">delete</span> <span class="n">mValueB</span><span class="p">;</span>
+    <span class="p">}</span>
 
-	<span class="kt">int</span> <span class="n">Get</span> <span class="p">(){</span>
-		<span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">mValue</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">^</span> <span class="n">mMask</span><span class="p">;</span>
-		<span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="p">(</span><span class="n">mValueB</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">^</span> <span class="n">mMaskB</span><span class="p">))</span> <span class="p">{</span>
-			<span class="c1">// cheat detected!</span>
-			<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-		<span class="p">}</span>
-		<span class="k">return</span> <span class="n">v</span><span class="p">;</span>
-	<span class="p">}</span>
+    <span class="kt">void</span> <span class="n">Set</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">){</span>
+        <span class="n">mIndex</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">mIndex</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">mIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">mValue</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">^</span> <span class="n">mMask</span><span class="p">;</span>
+        <span class="n">mValueB</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">^</span> <span class="n">mMaskB</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">Get</span> <span class="p">(){</span>
+        <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">mValue</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">^</span> <span class="n">mMask</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">!=</span> <span class="p">(</span><span class="n">mValueB</span><span class="p">[</span><span class="n">mIndex</span><span class="p">]</span> <span class="o">^</span> <span class="n">mMaskB</span><span class="p">))</span> <span class="p">{</span>
+            <span class="c1">// cheat detected!</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+    <span class="p">}</span>
 
 <span class="k">private</span><span class="o">:</span>
-	<span class="kt">int</span> <span class="n">mMask</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">mMaskB</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mMask</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mMaskB</span><span class="p">;</span>
 
-	<span class="kt">int</span> <span class="n">mIndex</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">mValue</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
-	<span class="kt">int</span> <span class="o">*</span><span class="n">mValueB</span><span class="p">;</span>
-<span class="p">};</span></code></pre></div>
+    <span class="kt">int</span> <span class="n">mIndex</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mValue</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">mValueB</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="时间变速">时间变速</h3>
 
-<h3 id="section-2">时间变速</h3>
 <p>坏人通过劫持系统时间相关的函数(比如gettimeofday)，对时间值增加或者减少，达到加速/减速的效果。</p>
 
 <p>对应方法：</p>
 
 <ul>
-  <li>如果可以进行网络对时，那么就可以轻易检测到客户端被变速。</li>
-  <li>单机检测的方法是，单起一个线程，记录当前时间，然后sleep，记录醒来后的时间，如果记录到的时间差和sleep的数字相差较大，而且多次检测都有问题的话，那基本可以认为客户端被变速了。</li>
+<li>如果可以进行网络对时，那么就可以轻易检测到客户端被变速。</li>
+<li>单机检测的方法是，单起一个线程，记录当前时间，然后sleep，记录醒来后的时间，如果记录到的时间差和sleep的数字相差较大，而且多次检测都有问题的话，那基本可以认为客户端被变速了。</li>
 </ul>
 
 <p><em>伪代码仅供参考</em></p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">threadFunc</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">st</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">tolerance</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">maxCount</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 
-<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">threadFunc</span> <span class="p">()</span> <span class="p">{</span>
-	<span class="kt">int</span> <span class="n">st</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">tolerance</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">maxCount</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
-
-	<span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-	<span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">getms</span> <span class="p">();</span>
-	<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">sleep</span> <span class="p">(</span><span class="n">st</span><span class="p">);</span>
-		<span class="kt">int</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">abs</span> <span class="p">(</span><span class="n">getms</span> <span class="p">()</span> <span class="o">-</span> <span class="n">now</span> <span class="o">-</span> <span class="n">tolerance</span><span class="p">);</span>
-		<span class="k">if</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">)</span>
-			<span class="n">count</span><span class="o">++</span><span class="p">;</span>
-		<span class="k">else</span>
-			<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-		<span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">maxCount</span><span class="p">)</span> <span class="p">{</span>
-			<span class="c1">// cheat detected!</span>
-		<span class="p">}</span>
-		<span class="n">now</span> <span class="o">=</span> <span class="n">getms</span> <span class="p">();</span>
-	<span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-
-<h3 id="section-3">代码保护</h3>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">getms</span> <span class="p">();</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sleep</span> <span class="p">(</span><span class="n">st</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">abs</span> <span class="p">(</span><span class="n">getms</span> <span class="p">()</span> <span class="o">-</span> <span class="n">now</span> <span class="o">-</span> <span class="n">tolerance</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">)</span>
+            <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">maxCount</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// cheat detected!</span>
+        <span class="p">}</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">getms</span> <span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="代码保护">代码保护</h3>
 
 <p>坏人通过反汇编软件或反编译软件来分析你的代码</p>
 
 <p>对应方法：</p>
 
 <ul>
-  <li>c/c++的代码要移除所有debug symbol</li>
-  <li>c#/java的代码一定要混淆</li>
-  <li>脚本用二进制保存</li>
-  <li>代码里的字符串是明文的，不要把加密密钥写在代码里</li>
-  <li>一些敏感的函数名字改掉，比如一个修改金钱的函数ModMoney，可以通过define大法来保持可读性和安全性</li>
+<li>c/c++的代码要移除所有debug symbol</li>
+<li>c#/java的代码一定要混淆</li>
+<li>脚本用二进制保存</li>
+<li>代码里的字符串是明文的，不要把加密密钥写在代码里</li>
+<li>一些敏感的函数名字改掉，比如一个修改金钱的函数ModMoney，可以通过define大法来保持可读性和安全性</li>
 </ul>
-
-<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#define ModMoney ascivjkdf</span>
-<span class="kt">void</span> <span class="n">Player</span><span class="o">::</span><span class="n">ModMoney</span> <span class="p">(</span><span class="kt">int</span> <span class="n">m</span><span class="p">)</span></code></pre></div>
-
-<h3 id="iap">IAP劫持</h3>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="cp">#define ModMoney ascivjkdf</span>
+<span class="kt">void</span> <span class="n">Player</span><span class="o">::</span><span class="n">ModMoney</span> <span class="p">(</span><span class="kt">int</span> <span class="n">m</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="iap劫持">IAP劫持</h3>
 
 <p>坏人通过劫持iap相关的函数，让客户端以为iap购买成功了，实际上iap请求根本没有发到苹果服务器</p>
 
 <p>对应方法：</p>
 
 <ul>
-  <li>务必<a href="https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1">通过服务器去验证iap收据</a></li>
+<li>务必<a href="https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1">通过服务器去验证iap收据</a></li>
 </ul>
 
-<h3 id="section-4">客户端文件修改</h3>
+<h3 id="客户端文件修改">客户端文件修改</h3>
 
 <p>坏人会修改你的执行文件，插入他的代码，或删除你的代码，会修改你的资源文件，会修改你的配置文件</p>
 
 <p>对应方法：</p>
 
 <ul>
-  <li>敏感的配置文件不要放在明显的目录，不要用明显的文件名，加密(例如XXTEA)后藏到资源文件目录里边去</li>
-  <li>ios上你是可以读取程序的代码段内存镜像的(<a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html">Mach-O格式介绍</a>)，对载入后的代码段做hash，发到服务器做校验吧</li>
+<li>敏感的配置文件不要放在明显的目录，不要用明显的文件名，加密(例如XXTEA)后藏到资源文件目录里边去</li>
+<li>ios上你是可以读取程序的代码段内存镜像的(<a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html">Mach-O格式介绍</a>)，对载入后的代码段做hash，发到服务器做校验吧</li>
 </ul>
 
-<h2 id="section-5">服务器</h2>
+<h2 id="服务器">服务器</h2>
 
 <p>没啥好说的，记住一点</p>
 
-<h3 id="section-6">不要相信客户端发过来的数值！ 不要相信客户端发过来的数值！ 不要相信客户端发过来的数值！</h3>
+<h3 id="不要相信客户端发过来的数值！-不要相信客户端发过来的数值！-不要相信客户端发过来的数值！">不要相信客户端发过来的数值！ 不要相信客户端发过来的数值！ 不要相信客户端发过来的数值！</h3>
 
         </div>
     </div>

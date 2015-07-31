@@ -23,7 +23,7 @@ comments: true
 
 *参考ProtectedNumber类的一些处理方法*
 
-{% highlight c++ %}
+```c++
 class ProtectedNumber {
 public:
 	ProtectedNumber (int n) {
@@ -72,7 +72,7 @@ private:
 	int mValue[10];
 	int *mValueB;
 };
-{% endhighlight %}
+```
 
 ### 时间变速
 坏人通过劫持系统时间相关的函数(比如gettimeofday)，对时间值增加或者减少，达到加速/减速的效果。
@@ -84,7 +84,7 @@ private:
 
 *伪代码仅供参考*
 
-{% highlight c++ %}
+```c++
 void threadFunc () {
 	int st = 1000;
 	int tolerance = 500;
@@ -105,7 +105,7 @@ void threadFunc () {
 		now = getms ();
 	}
 }
-{% endhighlight %}
+```
 
 ### 代码保护
 
@@ -119,10 +119,10 @@ void threadFunc () {
 * 代码里的字符串是明文的，不要把加密密钥写在代码里
 * 一些敏感的函数名字改掉，比如一个修改金钱的函数ModMoney，可以通过define大法来保持可读性和安全性
 
-{% highlight c++ %}
+```c++
 #define ModMoney ascivjkdf
 void Player::ModMoney (int m)
-{% endhighlight %}
+```
 
 ### IAP劫持
 
