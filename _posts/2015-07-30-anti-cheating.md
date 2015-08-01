@@ -23,56 +23,7 @@ comments: true
 
 *参考ProtectedNumber类的一些处理方法*
 
-```c++
-class ProtectedNumber {
-public:
-	ProtectedNumber (int n) {
-		mMask = 0;
-		mMaskB = 0;
-		
-		mIndex = 0;
-		mValueB = new int[10];
-		memset (mValue, 0, sizeof (mValue));
-		memset (mValueB, 0, sizeof (mValue));
-
-		for (int i = 0; i < sizeof (int); i++) {
-			mMask |= (rand () % 255 + 1) << (i * 8);
-			mMaskB |= (rand () % 255 + 1) << (i * 8);
-		}
-
-		Set (n);
-	}
-
-	~ProtectedNumber (){
-		delete mValueB;
-	}
-
-	void Set (int n){
-		mIndex++;
-		if (mIndex >= 10)
-			mIndex = 0;
-		mValue[mIndex] = n ^ mMask;
-		mValueB[mIndex] = n ^ mMaskB;
-	}
-
-	int Get (){
-		int v = mValue[mIndex] ^ mMask;
-		if (v != (mValueB[mIndex] ^ mMaskB)) {
-			// cheat detected!
-			return 0;
-		}
-		return v;
-	}
-
-private:
-	int mMask;
-	int mMaskB;
-
-	int mIndex;
-	int mValue[10];
-	int *mValueB;
-};
-```
+{% gist jintiao/1d81e23189f61c87f7f7 %}
 
 ### 时间变速
 坏人通过劫持系统时间相关的函数(比如gettimeofday)，对时间值增加或者减少，达到加速/减速的效果。
@@ -84,28 +35,7 @@ private:
 
 *伪代码仅供参考*
 
-```c++
-void threadFunc () {
-	int st = 1000;
-	int tolerance = 500;
-	int maxCount = 5;
-
-	int count = 0;
-	long now = getms ();
-	while (true) {
-		sleep (st);
-		int diff = abs (getms () - now - tolerance);
-		if (diff > tolerance)
-			count++;
-		else
-			count = 0;
-		if (count > maxCount) {
-			// cheat detected!
-		}
-		now = getms ();
-	}
-}
-```
+{% gist jintiao/1c1765e0c986745b110b %}
 
 ### 代码保护
 
