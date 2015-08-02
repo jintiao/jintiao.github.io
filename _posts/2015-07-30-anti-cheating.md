@@ -138,9 +138,17 @@ void Player::ModMoney (int m)
 
 对应方法：
 
-* 敏感的配置文件不要放在明显的目录，不要用明显的文件名，加密(例如XXTEA)后藏到资源文件目录里边去
+* 敏感的配置文件不要放在明显的目录，不要用明显的文件名，加密后藏到资源文件目录里边去
 * ios上你是可以读取程序的代码段内存镜像的([Mach-O格式介绍](https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html))，对载入后的代码段做hash，发到服务器做校验吧
 
+### 存档修改
+
+坏人会修改你的存档，或者用别的机器产生的存档覆盖自己机器里的存档
+
+对应方法：
+
+* 存档要加密，可以考虑用[XXTEA](https://en.wikipedia.org/wiki/XXTEA)，秘钥可以是用户名或机器识别码(identifier或者mac地址)，不管用什么，一定不要把秘钥明文写在代码里边，一定不要把秘钥明文写在代码里边，一定不要把秘钥明文写在代码里边
+* 一定要禁止一份存档可供多台机器使用的情况(taobao卖存档的事情太多了)，存档里保存用户名或者机器识别码，读存档的时候校验一下。
 
 ## 服务器
 
